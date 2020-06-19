@@ -17,11 +17,11 @@ function App() {
     //console.log(formSearched.city);
     const checkingApi = async () =>{
 
-      if(formSearched !==''){
+      if(formSearched === '') return;
         
         const imagesPerPage = 30;
         const appId = '17110992-721bd6557373ad88d048f01ed';
-        const url =  `https://pixabay.com/api/?key=${appId}&q=${formSearched}&per_page=${imagesPerPage}`;
+        const url =  `https://pixabay.com/api/?key=${appId}&q=${formSearched}&per_page=${imagesPerPage}&page=${actualPage}`;
         // Getting the answer from that url query
         const res =  await fetch(url);
         const data = await res.json();
@@ -31,25 +31,30 @@ function App() {
 
         const howManyPages = Math.ceil(data.totalHits / imagesPerPage);
         setNumberOfPagesState(howManyPages);
+      
+        const jumbotron = document.querySelector('.jumbotron');
+        jumbotron.scrollIntoView({behavior: 'smooth'})
 
-      }
+
     };
     checkingApi();
-  }, [formSearched]);
+  }, [formSearched, actualPage]);
+
+
 
 
   const previousPage = () => {
     const newActualPage = actualPage - 1;
     if (newActualPage === 0) return;
     setActualPageState(newActualPage);
-    console.log(newActualPage);
+    //console.log(newActualPage);
   }
 
   const nextPage = () => {
     const newActualPage = actualPage + 1;
     if (newActualPage > numberOfPages) return;
     setActualPageState(newActualPage);    
-    console.log(newActualPage);
+    //console.log(newActualPage);
   }
 
 
@@ -68,13 +73,19 @@ function App() {
           apiResultState={apiResult}
           />
 
+        {(actualPage === 1) ? null 
+        :(
         <button type="button" className="btn btn-info mr-1" onClick={previousPage}>
         &laquo; Previous Page 
-        </button>
-
+        </button>)
+        }
+        
+        {(actualPage === numberOfPages) ? null 
+        :(
         <button type="button" className="btn btn-info mr-1" onClick={nextPage}>
           Next Page &raquo;
-        </button>
+        </button>)
+        }
 
         </div>
 
